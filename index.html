@@ -88,6 +88,9 @@ h1{background:linear-gradient(90deg,#0284c7,#0891b2);-webkit-background-clip:tex
 .ctx{align-items:flex-end;padding-bottom:8px}
 .tc{align-self:end;padding-bottom:7px}
 .ci{text-align:right}
+.contact{margin-top:14px;padding:16px;text-align:center;background:rgba(255,255,255,.9);border:1px solid #bae6fd;border-radius:10px;color:#475569;font-size:13px;line-height:1.7}
+.contact a{color:#0284c7;font-weight:700;text-decoration:none}
+.contact a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -183,6 +186,10 @@ h1{background:linear-gradient(90deg,#0284c7,#0891b2);-webkit-background-clip:tex
 </div>
 
 <button class="btn" id="resetBtn" onclick="resetAll()">清空全部数据</button>
+<div class="contact" id="contactText">
+  如有疑问或其他需求，请发送邮件联系：
+  <a href="mailto:wfyanwentian@gmail.com">wfyanwentian@gmail.com</a>
+</div>
 </div>
 
 <script>
@@ -243,6 +250,7 @@ var TEXT = {
     summaryTitle:'季度应纳税汇总', outputTax:'销项税总额', inputTax:'进项税总额',
     netTax:'应交增值税', refund:'本季应补/退税金额', detailTitle:'季度明细对照',
     item:'项目', reset:'清空全部数据', export:'导出数据 CSV', switchLang:'English',
+    contact:'如有疑问或其他需求，请发送邮件联系：',
     enterTaxable:'输入报税金额', enterTotal:'输入总金额', auto:'自动计算', reverse:'自动反推',
     monthName:function(m){ return '第' + m + '月'; },
     noTax:'税额相抵，无需缴纳', payTax:'需向税务机关缴纳税款',
@@ -261,6 +269,7 @@ var TEXT = {
     summaryTitle:'Quarterly VAT Summary', outputTax:'Total Output VAT', inputTax:'Total Input VAT',
     netTax:'VAT Payable', refund:'VAT Payable / Refundable This Quarter', detailTitle:'Quarterly Details',
     item:'Item', reset:'Clear All Data', export:'Export CSV', switchLang:'中文',
+    contact:'For questions or additional requirements, please contact us by email:',
     enterTaxable:'Enter taxable amount', enterTotal:'Enter total amount', auto:'Auto calculated', reverse:'Auto reversed',
     monthName:function(m){ return 'Month ' + m; },
     noTax:'Output and input VAT offset; no tax payable', payTax:'VAT payment is due',
@@ -305,6 +314,7 @@ function applyLanguage() {
   document.getElementById('resetBtn').textContent = tx('reset');
   document.getElementById('exportBtn').textContent = tx('export');
   document.getElementById('langBtn').textContent = tx('switchLang');
+  document.getElementById('contactText').innerHTML = tx('contact') + ' <a href="mailto:wfyanwentian@gmail.com">wfyanwentian@gmail.com</a>';
   for (var M = 1; M <= 3; M++) {
     document.querySelector('#oA' + M).previousElementSibling.textContent = tx('monthName')(M);
     document.querySelector('#iA' + M).previousElementSibling.textContent = tx('monthName')(M);
