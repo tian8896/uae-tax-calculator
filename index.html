@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>报税计算器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#0b0e17;min-height:100vh;display:flex;justify-content:center;padding:22px 12px 60px;color:#e0e0e0;font-size:14px}
+.w{width:100%;max-width:860px}
+h1{text-align:center;font-size:22px;margin-bottom:16px;background:linear-gradient(90deg,#38bdf8,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;font-weight:800}
+.tabs{display:flex;gap:0;margin-bottom:14px;background:#181c2a;border-radius:10px;padding:3px}
+.tb{flex:1;padding:9px 4px;border:none;border-radius:8px;background:transparent;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.tb:hover{color:#9ca3af}.tb.a{background:#0ea5e9;color:#fff}
+.p{display:none}.p.a{display:block}
+.c{background:#141824;border:1px solid #1e2538;border-radius:12px;padding:16px;margin-bottom:14px}
+.c2{background:linear-gradient(135deg,#1a1040,#1c1230);border-color:#2d1f5e}
+.tl{font-size:14px;font-weight:700;margin-bottom:10px}
+.tlo{color:#38bdf8}.tli{color:#ef4444}.tls{color:#f59e0b}
+.ms{display:flex;gap:6px;margin-bottom:12px}
+.mb{flex:1;padding:7px 8px;border:1px solid #1e2538;border-radius:7px;background:#0d1117;color:#6b7280;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;line-height:1.45;font-family:inherit}
+.mb:hover{color:#9ca3af}.mb.a{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#38bdf8}
+.gh{display:grid;gap:6px;padding:7px 10px;background:#0d1117;border-radius:6px;font-size:11.5px;color:#4b5563;font-weight:600;margin-bottom:5px}
+.g4{grid-template-columns:52px 1fr 76px 1fr}
+.mr{display:grid;gap:6px;padding:8px 10px;background:#111520;border-radius:7px;margin-bottom:5px;align-items:center}
+.m4{grid-template-columns:52px 1fr 76px 1fr}
+.ml{font-size:12.5px;font-weight:700;color:#f59e0b}
+.ci{width:100%;padding:7px 9px;font-size:13.5px;border:1px solid #1e2538;border-radius:6px;background:#0d1117;color:#e0e0e0;outline:none;transition:border-color .15s;font-family:inherit;box-sizing:border-box}
+.ci:focus{border-color:#38bdf8}.ci::placeholder{color:#2d3748;font-size:12px}
+.ci:read-only{color:#4b5563;background:#0a0d15;cursor:default}
+.ctx{text-align:right;font-size:13px;font-weight:700;color:#f59e0b;display:flex;align-items:center;justify-content:flex-end;min-height:34px;padding-right:4px}
+.tr{display:grid;gap:6px;padding:11px 10px;margin-top:4px;background:linear-gradient(90deg,rgba(56,189,248,.06),rgba(52,211,153,.04));border:1px solid rgba(56,189,248,.12);border-radius:8px;align-items:center}
+.t4{grid-template-columns:52px 1fr 76px 1fr}
+.ip .tr{background:linear-gradient(90deg,rgba(239,68,68,.06),rgba(255,154,158,.04));border-color:rgba(239,68,68,.12)}
+.tll{font-weight:800;font-size:12.5px;color:#34d399}
+.tc{text-align:right;font-size:14.5px;font-weight:800;padding-right:4px}.tc1{color:#f59e0b}.tc2{color:#38bdf8}.ip .tc2{color:#ef4444}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.si{text-align:center;padding:14px 6px;background:#111520;border-radius:10px;border:1px solid #1e2538}
+.sl{font-size:11.5px;color:#4b5563;margin-bottom:5px}.sv{font-size:18px;font-weight:800}.sv1{color:#f59e0b}.sv2{color:#34d399}
+.db{margin-top:12px;padding:14px;text-align:center;background:#111520;border-radius:10px;border:1px dashed #2d1f5e}
+.dl{font-size:12px;color:#4b5563;margin-bottom:4px}.dv{font-size:24px;font-weight:900}.dh{font-size:12px;margin-top:4px}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:12px}
+.dt th{padding:7px 5px;text-align:right;color:#4b5563;font-weight:600;border-bottom:1px solid #1e2538}
+.dt th:first-child{text-align:left}
+.dt td{padding:6px 5px;text-align:right}
+.dt td:first-child{text-align:left}
+.dt tr+tr{border-top:1px solid #151b2a}
+.btn{display:block;width:100%;padding:11px;margin-top:16px;font-size:13.5px;font-weight:600;color:#94a3b8;background:#141824;border:1px solid #1e2538;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{background:#1e2538;color:#e0e0e0}
+.cb{display:inline-block;padding:6px 14px;font-size:12px;font-weight:600;color:#38bdf8;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:6px}
+.cb:hover{background:rgba(56,189,248,.18)}
+@media(max-width:580px){.g4,.m4,.t4{grid-template-columns:44px 1fr 66px 1fr!important}.sg{grid-template-columns:1fr 1fr}h1{font-size:19px}.tb{font-size:12px;padding:8px 3px}}
+
+/* 浅色主题 */
+body{background:linear-gradient(160deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);color:#1e293b}
+h1{background:linear-gradient(90deg,#0284c7,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tabs{background:#dbeafe;border:1px solid #bfdbfe}
+.tb{color:#64748b}
+.tb:hover{color:#0369a1}.tb.a{background:#0ea5e9;color:#fff;box-shadow:0 2px 7px rgba(14,165,233,.25)}
+.c{background:rgba(255,255,255,.96);border-color:#cbd5e1;box-shadow:0 8px 24px rgba(14,116,144,.08)}
+.c2{background:linear-gradient(135deg,#f0f9ff,#ecfeff);border-color:#bae6fd}
+.mb{background:#f8fafc;border-color:#cbd5e1;color:#64748b}
+.mb:hover{color:#0369a1;background:#f0f9ff}
+.mb.a{background:#e0f2fe;border-color:#38bdf8;color:#0284c7}
+.gh{background:#eff6ff;color:#64748b}
+.mr{background:#f8fafc;border:1px solid #e2e8f0}
+.ci{background:#fff;border-color:#cbd5e1;color:#0f172a}
+.ci:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.12)}
+.ci::placeholder{color:#94a3b8}
+.ci:read-only{color:#475569;background:#f1f5f9}
+.tr{background:linear-gradient(90deg,#eff6ff,#ecfdf5);border-color:#bae6fd}
+.ip .tr{background:linear-gradient(90deg,#fff1f2,#fff7ed);border-color:#fecdd3}
+.si{background:#fff;border-color:#dbeafe}
+.sl,.dl{color:#64748b}
+.db{background:#fff;border-color:#7dd3fc}
+.dt th{color:#64748b;border-color:#cbd5e1}
+.dt tr+tr{border-color:#e2e8f0}
+.btn{background:#fff;border-color:#cbd5e1;color:#475569;box-shadow:0 4px 14px rgba(14,116,144,.06)}
+.btn:hover{background:#e0f2fe;color:#0369a1;border-color:#7dd3fc}
+.cb{color:#0284c7;background:#e0f2fe;border-color:#7dd3fc}
+.cb:hover{background:#bae6fd}
+.tools{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px}
+.toolbtn{padding:7px 13px;border:1px solid #7dd3fc;border-radius:7px;background:#fff;color:#0284c7;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.toolbtn:hover{background:#e0f2fe}
+/* 金额统一底部对齐 */
+.mr,.tr{align-items:end}
+.ctx{align-items:flex-end;padding-bottom:8px}
+.tc{align-self:end;padding-bottom:7px}
+.ci{text-align:right}
+</style>
+</head>
+<body>
+
+<div class="w">
+<h1 id="pageTitle">报税计算器 · 税率5%</h1>
+
+<div class="tools">
+  <button class="toolbtn" id="langBtn" onclick="toggleLanguage()">English</button>
+  <button class="toolbtn" id="exportBtn" onclick="exportData()">导出数据 CSV</button>
+</div>
+
+<div class="tabs">
+  <button class="tb a" id="tabOutput" data-tab="output">销项税</button>
+  <button class="tb" id="tabInput" data-tab="input">进项税</button>
+  <button class="tb" id="tabSummary" data-tab="summary">汇 总</button>
+</div>
+
+<!-- 销项税 -->
+<div id="panel-output" class="p a">
+  <div class="c">
+    <div class="tl tlo" id="outputTitle">销项税 · 税率5%</div>
+    <div class="ms" id="oms">
+      <button class="mb a" data-mode="amt"><span id="oModeAmt">输入报税金额(不含税)<br>自动算税额+总额</span></button>
+      <button class="mb" data-mode="tot"><span id="oModeTot">输入总金额(含税)<br>反推报税金额+税额</span></button>
+    </div>
+    <div class="gh g4">
+      <div class="monthHead">月份</div>
+      <div class="taxableHead" style="text-align:right">报税金额（不含税）</div>
+      <div class="taxHead" style="text-align:right">税额 ×5%</div>
+      <div class="totalHead" style="text-align:right">总金额（含税）</div>
+    </div>
+    <div id="oRows"></div>
+    <div class="tr t4">
+      <div class="tll quarterLabel">季度合计</div>
+      <div class="tc" id="oSA">--</div>
+      <div class="tc tc1" id="oST">--</div>
+      <div class="tc tc2" id="oSS">--</div>
+    </div>
+    <button class="cb" id="calcOutputBtn" onclick="oCalc()">计算销项税</button>
+  </div>
+</div>
+
+<!-- 进项税 -->
+<div id="panel-input" class="p ip">
+  <div class="c">
+    <div class="tl tli" id="inputTitle">进项税 · 税率5%</div>
+    <div class="ms" id="ims">
+      <button class="mb a" data-mode="amt"><span id="iModeAmt">输入报税金额(不含税)<br>自动算税额+总额</span></button>
+      <button class="mb" data-mode="tot"><span id="iModeTot">输入总金额(含税)<br>反推报税金额+税额</span></button>
+    </div>
+    <div class="gh g4">
+      <div class="monthHead">月份</div>
+      <div class="taxableHead" style="text-align:right">报税金额（不含税）</div>
+      <div class="taxHead" style="text-align:right">税额 ×5%</div>
+      <div class="totalHead" style="text-align:right">总金额（含税）</div>
+    </div>
+    <div id="iRows"></div>
+    <div class="tr t4">
+      <div class="tll quarterLabel">季度合计</div>
+      <div class="tc" id="iSA">--</div>
+      <div class="tc tc1" id="iST">--</div>
+      <div class="tc tc2" id="iSS">--</div>
+    </div>
+    <button class="cb" id="calcInputBtn" onclick="iCalc()">计算进项税</button>
+  </div>
+</div>
+
+<!-- 汇总 -->
+<div id="panel-summary" class="p">
+  <div class="c c2">
+    <div class="tl tls" id="summaryTitle">季度应纳税汇总</div>
+    <div class="sg">
+      <div class="si"><div class="sl" id="summaryOutputTax">销项税总额</div><div class="sv sv1" id="fOT">0.00</div></div>
+      <div class="si"><div class="sl" id="summaryInputTax">进项税总额</div><div class="sv sv1" id="fIT">0.00</div></div>
+      <div class="si"><div class="sl" id="summaryNetTax">应交增值税</div><div class="sv sv2" id="fNT">0.00</div></div>
+    </div>
+    <div class="db">
+      <div class="dl" id="refundLabel">本季应补/退税金额</div>
+      <div class="dv sv2" id="fBig">0.00</div>
+      <div class="dh" id="fHint">请录入销项和进项数据</div>
+    </div>
+  </div>
+  <div class="c" style="margin-top:14px">
+    <div class="tl tls" id="detailTitle">季度明细对照</div>
+    <table class="dt">
+      <thead><tr>
+        <th id="detailItem">项目</th><th class="detailMonth" style="text-align:right">第1月</th><th class="detailMonth" style="text-align:right">第2月</th><th class="detailMonth" style="text-align:right">第3月</th><th id="detailQuarter" style="text-align:right;color:#34d399">季度合计</th>
+      </tr></thead>
+      <tbody id="dtb"></tbody>
+    </table>
+  </div>
+</div>
+
+<button class="btn" id="resetBtn" onclick="resetAll()">清空全部数据</button>
+</div>
+
+<script>
+/* ================================================================
+   报税计算器 · 税率5%
+   ================================================================ */
+var R = 0.05;
+var D = 1.05;
+
+/* 工具函数 */
+function r2(n) { return Math.round(n * 100) / 100; }
+function money(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : 0;
+  var text = String(v || '')
+    .replace(/AED|د\.?إ\.?/gi, '')
+    .replace(/[¥￥,\s，]/g, '')
+    .replace(/。/g, '.');
+  var n = Number(text);
+  return isFinite(n) ? n : 0;
+}
+function fmt(n) {
+  if (!n || isNaN(n) || n === 0) return '--';
+  return 'AED ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmn(n) {
+  if (!n || isNaN(n) || n === 0) return '--';
+  return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/* 计算：已知报税金额A，求税额T和总金额S */
+function fa(A) {
+  if (!A || A <= 0) return { A:0, T:0, S:0 };
+  var T = r2(A * R);
+  var S = r2(A + T);
+  return { A:A, T:T, S:S };
+}
+/* 计算：已知总金额S，反推报税金额A和税额T */
+function ft(S) {
+  if (!S || S <= 0) return { A:0, T:0, S:0 };
+  S = r2(S);
+  var A = r2(S / D);
+  var T = r2(S - A);
+  return { A:A, T:T, S:S };
+}
+
+var oMode = 'amt';
+var iMode = 'amt';
+var lang = 'zh';
+
+var TEXT = {
+  zh: {
+    pageTitle:'报税计算器 · 税率5%', output:'销项税', input:'进项税', summary:'汇 总',
+    outputTitle:'销项税 · 税率5%', inputTitle:'进项税 · 税率5%',
+    modeAmt:'输入报税金额(不含税)<br>自动算税额+总额',
+    modeTot:'输入总金额(含税)<br>反推报税金额+税额',
+    month:'月份', taxable:'报税金额（不含税）', tax:'税额 ×5%', total:'总金额（含税）',
+    quarter:'季度合计', calcOutput:'计算销项税', calcInput:'计算进项税',
+    summaryTitle:'季度应纳税汇总', outputTax:'销项税总额', inputTax:'进项税总额',
+    netTax:'应交增值税', refund:'本季应补/退税金额', detailTitle:'季度明细对照',
+    item:'项目', reset:'清空全部数据', export:'导出数据 CSV', switchLang:'English',
+    enterTaxable:'输入报税金额', enterTotal:'输入总金额', auto:'自动计算', reverse:'自动反推',
+    monthName:function(m){ return '第' + m + '月'; },
+    noTax:'税额相抵，无需缴纳', payTax:'需向税务机关缴纳税款',
+    creditTax:'进项大于销项，可留抵或申请退税',
+    outputTaxable:'销项-报税金额', outputTaxRow:'销项-税额', outputTotal:'销项-总金额',
+    inputTaxable:'进项-报税金额', inputTaxRow:'进项-税额', inputTotal:'进项-总金额',
+    exportName:'报税数据'
+  },
+  en: {
+    pageTitle:'UAE TAX CALCULATOR', output:'Output VAT', input:'Input VAT', summary:'Summary',
+    outputTitle:'Output VAT · 5%', inputTitle:'Input VAT · 5%',
+    modeAmt:'Enter taxable amount (excl. VAT)<br>Calculate VAT + total',
+    modeTot:'Enter total amount (incl. VAT)<br>Reverse taxable amount + VAT',
+    month:'Month', taxable:'Taxable Amount (Excl. VAT)', tax:'VAT ×5%', total:'Total (Incl. VAT)',
+    quarter:'Quarter Total', calcOutput:'Calculate Output VAT', calcInput:'Calculate Input VAT',
+    summaryTitle:'Quarterly VAT Summary', outputTax:'Total Output VAT', inputTax:'Total Input VAT',
+    netTax:'VAT Payable', refund:'VAT Payable / Refundable This Quarter', detailTitle:'Quarterly Details',
+    item:'Item', reset:'Clear All Data', export:'Export CSV', switchLang:'中文',
+    enterTaxable:'Enter taxable amount', enterTotal:'Enter total amount', auto:'Auto calculated', reverse:'Auto reversed',
+    monthName:function(m){ return 'Month ' + m; },
+    noTax:'Output and input VAT offset; no tax payable', payTax:'VAT payment is due',
+    creditTax:'Input VAT exceeds output VAT; credit or refund may apply',
+    outputTaxable:'Output - Taxable Amount', outputTaxRow:'Output - VAT', outputTotal:'Output - Total',
+    inputTaxable:'Input - Taxable Amount', inputTaxRow:'Input - VAT', inputTotal:'Input - Total',
+    exportName:'tax-data'
+  }
+};
+
+function tx(key) { return TEXT[lang][key]; }
+
+function applyLanguage() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.title = tx('pageTitle');
+  document.getElementById('pageTitle').textContent = tx('pageTitle');
+  document.getElementById('tabOutput').textContent = tx('output');
+  document.getElementById('tabInput').textContent = tx('input');
+  document.getElementById('tabSummary').textContent = tx('summary');
+  document.getElementById('outputTitle').textContent = tx('outputTitle');
+  document.getElementById('inputTitle').textContent = tx('inputTitle');
+  document.getElementById('oModeAmt').innerHTML = tx('modeAmt');
+  document.getElementById('oModeTot').innerHTML = tx('modeTot');
+  document.getElementById('iModeAmt').innerHTML = tx('modeAmt');
+  document.getElementById('iModeTot').innerHTML = tx('modeTot');
+  document.querySelectorAll('.monthHead').forEach(function(el){ el.textContent = tx('month'); });
+  document.querySelectorAll('.taxableHead').forEach(function(el){ el.textContent = tx('taxable'); });
+  document.querySelectorAll('.taxHead').forEach(function(el){ el.textContent = tx('tax'); });
+  document.querySelectorAll('.totalHead').forEach(function(el){ el.textContent = tx('total'); });
+  document.querySelectorAll('.quarterLabel').forEach(function(el){ el.textContent = tx('quarter'); });
+  document.getElementById('calcOutputBtn').textContent = tx('calcOutput');
+  document.getElementById('calcInputBtn').textContent = tx('calcInput');
+  document.getElementById('summaryTitle').textContent = tx('summaryTitle');
+  document.getElementById('summaryOutputTax').textContent = tx('outputTax');
+  document.getElementById('summaryInputTax').textContent = tx('inputTax');
+  document.getElementById('summaryNetTax').textContent = tx('netTax');
+  document.getElementById('refundLabel').textContent = tx('refund');
+  document.getElementById('detailTitle').textContent = tx('detailTitle');
+  document.getElementById('detailItem').textContent = tx('item');
+  document.getElementById('detailQuarter').textContent = tx('quarter');
+  document.querySelectorAll('.detailMonth').forEach(function(el, index){ el.textContent = tx('monthName')(index + 1); });
+  document.getElementById('resetBtn').textContent = tx('reset');
+  document.getElementById('exportBtn').textContent = tx('export');
+  document.getElementById('langBtn').textContent = tx('switchLang');
+  for (var M = 1; M <= 3; M++) {
+    document.querySelector('#oA' + M).previousElementSibling.textContent = tx('monthName')(M);
+    document.querySelector('#iA' + M).previousElementSibling.textContent = tx('monthName')(M);
+  }
+  applyOMode();
+  applyIMode();
+  doSum();
+}
+
+function toggleLanguage() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  applyLanguage();
+}
+
+/* 构建月份行 */
+function buildRows() {
+  var oh = '', ih = '';
+  for (var m = 1; m <= 3; m++) {
+    oh += '<div class="mr m4">'
+      + '<div class="ml">第' + m + '月</div>'
+      + '<input class="ci" id="oA' + m + '" inputmode="decimal" placeholder="报税金额">'
+      + '<div class="ctx" id="oT' + m + '">--</div>'
+      + '<input class="ci" id="oS' + m + '" inputmode="decimal" placeholder="总金额">'
+      + '</div>';
+    ih += '<div class="mr m4">'
+      + '<div class="ml">第' + m + '月</div>'
+      + '<input class="ci" id="iA' + m + '" inputmode="decimal" placeholder="报税金额">'
+      + '<div class="ctx" id="iT' + m + '">--</div>'
+      + '<input class="ci" id="iS' + m + '" inputmode="decimal" placeholder="总金额">'
+      + '</div>';
+  }
+  document.getElementById('oRows').innerHTML = oh;
+  document.getElementById('iRows').innerHTML = ih;
+}
+
+/* 应用销项税模式：设置只读 */
+function applyOMode() {
+  for (var M = 1; M <= 3; M++) {
+    var a = document.getElementById('oA' + M);
+    var s = document.getElementById('oS' + M);
+    if (oMode === 'amt') {
+      a.readOnly = false; a.placeholder = tx('enterTaxable');
+      s.readOnly = true;  s.placeholder = tx('auto');
+    } else {
+      a.readOnly = true;  a.placeholder = tx('reverse');
+      s.readOnly = false; s.placeholder = tx('enterTotal');
+    }
+  }
+}
+function applyIMode() {
+  for (var M = 1; M <= 3; M++) {
+    var a = document.getElementById('iA' + M);
+    var s = document.getElementById('iS' + M);
+    if (iMode === 'amt') {
+      a.readOnly = false; a.placeholder = tx('enterTaxable');
+      s.readOnly = true;  s.placeholder = tx('auto');
+    } else {
+      a.readOnly = true;  a.placeholder = tx('reverse');
+      s.readOnly = false; s.placeholder = tx('enterTotal');
+    }
+  }
+}
+
+/* 销项税计算 */
+function oCalc(keepEditingValue, editingMonth) {
+  var sA = 0, sT = 0, sS = 0;
+  for (var M = 1; M <= 3; M++) {
+    var elA = document.getElementById('oA' + M);
+    var elS = document.getElementById('oS' + M);
+    var elT = document.getElementById('oT' + M);
+    var A = 0, T = 0, S = 0;
+    if (oMode === 'amt') {
+      A = money(elA.value);
+      if (A > 0) { var r = fa(A); T = r.T; S = r.S; }
+    } else {
+      S = money(elS.value);
+      if (S > 0) { var r = ft(S); A = r.A; T = r.T; }
+    }
+    if (A > 0) {
+      if (!(keepEditingValue && editingMonth === M && oMode === 'amt')) {
+        elA.value = (oMode === 'tot') ? A.toFixed(2) : elA.value;
+      }
+      elT.textContent = fmn(T);
+      if (!(keepEditingValue && editingMonth === M && oMode === 'tot')) {
+        elS.value = S.toFixed(2);
+      }
+    } else {
+      if (oMode === 'tot') elA.value = '';
+      elT.textContent = '--';
+      if (oMode === 'amt') elS.value = '';
+    }
+    sA += A; sT += T; sS += S;
+  }
+  document.getElementById('oSA').textContent = fmn(sA);
+  document.getElementById('oST').textContent = fmt(sT);
+  document.getElementById('oSS').textContent = fmt(sS);
+  doSum();
+}
+
+/* 进项税计算 */
+function iCalc(keepEditingValue, editingMonth) {
+  var sA = 0, sT = 0, sS = 0;
+  for (var M = 1; M <= 3; M++) {
+    var elA = document.getElementById('iA' + M);
+    var elS = document.getElementById('iS' + M);
+    var elT = document.getElementById('iT' + M);
+    var A = 0, T = 0, S = 0;
+    if (iMode === 'amt') {
+      A = money(elA.value);
+      if (A > 0) { var r = fa(A); T = r.T; S = r.S; }
+    } else {
+      S = money(elS.value);
+      if (S > 0) { var r = ft(S); A = r.A; T = r.T; }
+    }
+    if (A > 0) {
+      if (!(keepEditingValue && editingMonth === M && iMode === 'amt')) {
+        elA.value = (iMode === 'tot') ? A.toFixed(2) : elA.value;
+      }
+      elT.textContent = fmn(T);
+      if (!(keepEditingValue && editingMonth === M && iMode === 'tot')) {
+        elS.value = S.toFixed(2);
+      }
+    } else {
+      if (iMode === 'tot') elA.value = '';
+      elT.textContent = '--';
+      if (iMode === 'amt') elS.value = '';
+    }
+    sA += A; sT += T; sS += S;
+  }
+  document.getElementById('iSA').textContent = fmn(sA);
+  document.getElementById('iST').textContent = fmt(sT);
+  document.getElementById('iSS').textContent = fmt(sS);
+  doSum();
+}
+
+/* 汇总 */
+function doSum() {
+  var oT = money(document.getElementById('oST').textContent);
+  var iT = money(document.getElementById('iST').textContent);
+  var net = r2(oT - iT);
+  document.getElementById('fOT').textContent = fmt(oT);
+  document.getElementById('fIT').textContent = fmt(iT);
+  document.getElementById('fNT').textContent = fmt(net);
+  document.getElementById('fBig').textContent = fmt(net);
+  var h = document.getElementById('fHint');
+  if (Math.abs(net) < 0.01) {
+    h.textContent = tx('noTax');
+    h.style.color = '#f59e0b';
+    document.getElementById('fBig').style.color = '#f59e0b';
+  } else if (net > 0) {
+    h.textContent = tx('payTax');
+    h.style.color = '#ef4444';
+    document.getElementById('fBig').style.color = '#ef4444';
+  } else {
+    h.textContent = tx('creditTax');
+    h.style.color = '#34d399';
+    document.getElementById('fBig').style.color = '#34d399';
+  }
+  /* 明细表 */
+  var H = '';
+  H += '<tr><td style="color:#38bdf8">' + tx('outputTaxable') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var v = money(document.getElementById('oA' + M).value);
+    H += '<td>' + fmn(v) + '</td>';
+  }
+  H += '<td style="color:#38bdf8;font-weight:700">' + fmn(money(document.getElementById('oSA').textContent)) + '</td></tr>';
+  H += '<tr><td style="color:#f59e0b">' + tx('outputTaxRow') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var t = money(document.getElementById('oT' + M).textContent);
+    H += '<td>' + (t > 0 ? fmn(t) : '--') + '</td>';
+  }
+  H += '<td style="color:#f59e0b;font-weight:700">' + document.getElementById('oST').textContent + '</td></tr>';
+  H += '<tr><td style="color:#38bdf8">' + tx('outputTotal') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var s = money(document.getElementById('oS' + M).value);
+    H += '<td>' + (s > 0 ? fmn(s) : '--') + '</td>';
+  }
+  H += '<td style="color:#38bdf8;font-weight:700">' + document.getElementById('oSS').textContent + '</td></tr>';
+  H += '<tr><td style="color:#ef4444">' + tx('inputTaxable') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var v = money(document.getElementById('iA' + M).value);
+    H += '<td>' + fmn(v) + '</td>';
+  }
+  H += '<td style="color:#ef4444;font-weight:700">' + fmn(money(document.getElementById('iSA').textContent)) + '</td></tr>';
+  H += '<tr><td style="color:#f59e0b">' + tx('inputTaxRow') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var t = money(document.getElementById('iT' + M).textContent);
+    H += '<td>' + (t > 0 ? fmn(t) : '--') + '</td>';
+  }
+  H += '<td style="color:#f59e0b;font-weight:700">' + document.getElementById('iST').textContent + '</td></tr>';
+  H += '<tr><td style="color:#ef4444">' + tx('inputTotal') + '</td>';
+  for (var M = 1; M <= 3; M++) {
+    var s = money(document.getElementById('iS' + M).value);
+    H += '<td>' + (s > 0 ? fmn(s) : '--') + '</td>';
+  }
+  H += '<td style="color:#ef4444;font-weight:700">' + document.getElementById('iSS').textContent + '</td></tr>';
+  document.getElementById('dtb').innerHTML = H;
+  saveData();
+}
+
+/* 模式切换 */
+function setOMode(mode) {
+  oMode = mode;
+  var btns = document.getElementById('oms').querySelectorAll('button');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('a', btns[i].dataset.mode === mode);
+  }
+  applyOMode();
+  oCalc();
+}
+function setIMode(mode) {
+  iMode = mode;
+  var btns = document.getElementById('ims').querySelectorAll('button');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('a', btns[i].dataset.mode === mode);
+  }
+  applyIMode();
+  iCalc();
+}
+
+/* Tab切换 */
+function switchTab(tab) {
+  var panels = document.querySelectorAll('.p');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('a');
+  document.getElementById('panel-' + tab).classList.add('a');
+  var btns = document.querySelectorAll('.tb');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('a', btns[i].dataset.tab === tab);
+  }
+  if (tab === 'summary') doSum();
+}
+
+/* 导出当前数据为 CSV */
+function exportData() {
+  oCalc();
+  iCalc();
+  var rows = [[tx('item'), tx('monthName')(1), tx('monthName')(2), tx('monthName')(3), tx('quarter')]];
+  function addRow(label, prefix, field) {
+    var values = [];
+    for (var M = 1; M <= 3; M++) {
+      var id = prefix + field + M;
+      values.push(money(document.getElementById(id).value || document.getElementById(id).textContent));
+    }
+    rows.push([label].concat(values).concat([r2(values[0] + values[1] + values[2])]));
+  }
+  addRow(tx('outputTaxable'), 'o', 'A');
+  addRow(tx('outputTaxRow'), 'o', 'T');
+  addRow(tx('outputTotal'), 'o', 'S');
+  addRow(tx('inputTaxable'), 'i', 'A');
+  addRow(tx('inputTaxRow'), 'i', 'T');
+  addRow(tx('inputTotal'), 'i', 'S');
+  rows.push([]);
+  rows.push([tx('outputTax'), money(document.getElementById('oST').textContent)]);
+  rows.push([tx('inputTax'), money(document.getElementById('iST').textContent)]);
+  rows.push([tx('netTax'), money(document.getElementById('fNT').textContent)]);
+  var csv = '\uFEFF' + rows.map(function(row) {
+    return row.map(function(value) {
+      var text = String(value == null ? '' : value);
+      return '"' + text.replace(/"/g, '""') + '"';
+    }).join(',');
+  }).join('\r\n');
+  var blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  var date = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = tx('exportName') + '-' + date + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+/* 持久化 */
+function saveData() {
+  var d = { oMode: oMode, iMode: iMode, lang: lang };
+  for (var M = 1; M <= 3; M++) {
+    d['oA' + M] = document.getElementById('oA' + M).value;
+    d['oS' + M] = document.getElementById('oS' + M).value;
+    d['iA' + M] = document.getElementById('iA' + M).value;
+    d['iS' + M] = document.getElementById('iS' + M).value;
+  }
+  try {
+    localStorage.setItem('tax5', JSON.stringify(d));
+  } catch (e) {}
+}
+function loadData() {
+  try {
+    var raw = localStorage.getItem('tax5');
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (d.oMode) oMode = d.oMode;
+    if (d.iMode) iMode = d.iMode;
+    if (d.lang === 'zh' || d.lang === 'en') lang = d.lang;
+    var ob = document.getElementById('oms').querySelectorAll('button');
+    for (var i = 0; i < ob.length; i++) ob[i].classList.toggle('a', ob[i].dataset.mode === oMode);
+    var ib = document.getElementById('ims').querySelectorAll('button');
+    for (var i = 0; i < ib.length; i++) ib[i].classList.toggle('a', ib[i].dataset.mode === iMode);
+    applyOMode();
+    applyIMode();
+    for (var M = 1; M <= 3; M++) {
+      if (d['oA' + M]) document.getElementById('oA' + M).value = d['oA' + M];
+      if (d['oS' + M]) document.getElementById('oS' + M).value = d['oS' + M];
+      if (d['iA' + M]) document.getElementById('iA' + M).value = d['iA' + M];
+      if (d['iS' + M]) document.getElementById('iS' + M).value = d['iS' + M];
+    }
+  } catch (e) {}
+}
+
+function resetAll() {
+  for (var M = 1; M <= 3; M++) {
+    document.getElementById('oA' + M).value = '';
+    document.getElementById('oS' + M).value = '';
+    document.getElementById('oT' + M).textContent = '--';
+    document.getElementById('iA' + M).value = '';
+    document.getElementById('iS' + M).value = '';
+    document.getElementById('iT' + M).textContent = '--';
+  }
+  try {
+    localStorage.removeItem('tax5');
+  } catch (e) {}
+  oCalc(); iCalc();
+}
+
+/* 初始化 */
+buildRows();
+
+document.querySelectorAll('.tb').forEach(function(btn) {
+  btn.addEventListener('click', function() { switchTab(this.dataset.tab); });
+});
+
+document.getElementById('oms').querySelectorAll('button').forEach(function(btn) {
+  btn.addEventListener('click', function() { setOMode(this.dataset.mode); });
+});
+document.getElementById('ims').querySelectorAll('button').forEach(function(btn) {
+  btn.addEventListener('click', function() { setIMode(this.dataset.mode); });
+});
+
+/* 输入时即时计算；离开输入框时统一格式化为两位小数 */
+for (var m = 1; m <= 3; m++) {
+  (function(M) {
+    document.getElementById('oA' + M).addEventListener('input', function() { oCalc(true, M); });
+    document.getElementById('oS' + M).addEventListener('input', function() { oCalc(true, M); });
+    document.getElementById('iA' + M).addEventListener('input', function() { iCalc(true, M); });
+    document.getElementById('iS' + M).addEventListener('input', function() { iCalc(true, M); });
+    document.getElementById('oA' + M).addEventListener('blur', function() { oCalc(); });
+    document.getElementById('oS' + M).addEventListener('blur', function() { oCalc(); });
+    document.getElementById('iA' + M).addEventListener('blur', function() { iCalc(); });
+    document.getElementById('iS' + M).addEventListener('blur', function() { iCalc(); });
+  })(m);
+}
+
+loadData();
+applyLanguage();
+oCalc();
+iCalc();
+</script>
+</body>
+</html>
